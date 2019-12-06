@@ -12,6 +12,8 @@
     <script type="module" src="../load-cesium-es6.js"></script>
 </head>
 <body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+
 <style>
     @import url(../templates/bucket.css);
 </style>
@@ -85,12 +87,19 @@ function startup(Cesium) {
     //add hosipital entity
     function createHospital(hpname,hpposition,data1,data2,data3){
        var pinBuilder = new Cesium.PinBuilder();
+       var color ;
+        if (data3>80){
+            color = Cesium.Color.RED;
+        }else if(data3>50){
+            color = Cesium.Color.YELLOW;
+        }else{color = Cesium.Color.GREEN;}
        viewer.entities.add({        
            name: hpname,
            position: hpposition,
-           description:'<table border="1"><tr><td>急性保險病床數</td><td>1582</td></tr><tr><td>急性病床數</td><td>2107</td></tr><tr><td>急性保險病床比率</td><td>75.08%</td></tr></table>',
+           description:'<table border="1"><tr><td>急性保險病床數</td><td>'+data1+'</td></tr><tr><td>急性病床數</td><td>'+data2+'</td></tr><tr><td>急性保險病床比率</td><td>'+data3+'</td></tr></table>',
            billboard:
            {
+               color : color,
                image:'../Source/Images/hospital/yellostar.png',
                scale : 0.2,
                verticalOrigin : Cesium.VerticalOrigin.BOTTOM
@@ -227,6 +236,12 @@ function startup(Cesium) {
             }
         },
         {
+            text : 'AJAX',
+            onselect : function() {
+            $.get("http://localhost:8082/hpinfo");
+            }
+        },
+        {
             text : 'live streaming',
             onselect : function(){
             window.open("https://www.youtube.com/embed/Bs1ZcKhnxSo");
@@ -242,7 +257,7 @@ function startup(Cesium) {
             text : 'hospital',
             onselect : function(){
                            for(var i=0; i<26; i++){
-                               createHospital(hp1name[i], hp1position[i], 0, 0, 0);
+                               createHospital(hp1name[i], hp1position[i], Math.random()*1000, Math.random()*1000, Math.random()*100);
     
                            }
                        }
