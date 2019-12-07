@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sched, time
 import pandas as pd
 
@@ -10,8 +11,7 @@ def func():
 
     print(pd.read_html(url)[1])
 
-    df.to_json('C:/Program Files/Cesium-1.50/cesium-workshop-master/Source/excel_output.json')
-
+    df.to_excel('../excel_output.xls')
 
 def perform1(inc):
     schedule.enter(inc,0,perform1,(inc,))

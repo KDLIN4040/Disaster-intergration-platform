@@ -12,17 +12,17 @@
     <script type="module" src="../load-cesium-es6.js"></script>
 </head>
 <body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
-<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
-<script>
-</script>
+<head>
+<script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>   
+</head>
     <style>
     @import url(../templates/bucket.css);
 </style>
 <div id="cesiumContainer" class="fullSize"></div>
 <div id="loadingOverlay"><h1>Loading...</h1></div>
 <div id="toolbar"></div>
-<button id="ajaxButton" type="button" style="position:absolute;top:310px;left:10px;"
-        >Make a request</button><script id="cesium_sandcastle_script">
+<button id="ajaxButton" type="button" style="position:absolute;top:310px;left:10px;">Make a request</button><script id="cesium_sandcastle_script">
 function startup(Cesium) {
     'use strict';
 //Sandcastle_Begin
@@ -98,7 +98,7 @@ function startup(Cesium) {
        viewer.entities.add({        
            name: hpname,
            position: hpposition,
-           description:'<table border="1"><tr><td>急性保險病床數</td><td>'+data1+'</td></tr><tr><td>急性病床數</td><td>'+data2+'</td></tr><tr><td>急性保險病床比率</td><td>'+data3+'</td></tr></table>',
+           description:'<table border="1"><tr><td>急性保險病床數</td><td>'+data1+'</td></tr><tr><td>急性病床數</td><td>'+data2+'</td></tr><tr><td>急性保險病床比率</td><td>'+data3+'%'+'</td></tr></table>',
            billboard:
            {
                color : color,
@@ -240,7 +240,16 @@ function startup(Cesium) {
         {
             text : 'AJAX',
             onselect : function() {
-            $.get("http://localhost:8082/hpinfo");
+                var path="http://localhost:8082/hpinfo";
+                $.ajax({
+                    url: path,
+                    data: $('#sentToServer').serialize(),
+                    type:"GET",
+                    dataType:'text',
+                    success: function(res){
+                        alert(res);
+                    }
+                });
             }
         },
         {
@@ -259,7 +268,7 @@ function startup(Cesium) {
             text : 'hospital',
             onselect : function(){
                            for(var i=0; i<26; i++){
-                               createHospital(hp1name[i], hp1position[i], Math.random()*1000, Math.random()*1000, Math.random()*100);
+                               createHospital(hp1name[i], hp1position[i], parseInt(Math.random()*1000), parseInt(Math.random()*1000), parseInt(Math.random()*100));
     
                            }
                        }
