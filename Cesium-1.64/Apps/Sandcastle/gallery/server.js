@@ -158,7 +158,7 @@
             res.status(code).send(body);
         });
     });
-    app.get('/hpinfo',function(req, res){
+    app.route('123').get(function(req, res){
         res.send(1);
     });
 

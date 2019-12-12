@@ -6,7 +6,13 @@ var gallery_demos = [
   "name": "Disaster integration platform",
   "isNew": false,
   "img": "Disaster integration platform.png"
-},{
+},
+{
+  "name": "color by distance",
+  "isNew": false,
+  "img": "color by distance.png"
+},
+{
   "name": "3D Models",
   "isNew": false,
   "img": "3D Models.jpg"

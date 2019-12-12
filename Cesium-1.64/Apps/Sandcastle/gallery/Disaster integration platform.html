@@ -12,17 +12,16 @@
     <script type="module" src="../load-cesium-es6.js"></script>
 </head>
 <body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
-<head>
 <script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>   
-</head>
+
     <style>
     @import url(../templates/bucket.css);
 </style>
 <div id="cesiumContainer" class="fullSize"></div>
 <div id="loadingOverlay"><h1>Loading...</h1></div>
 <div id="toolbar"></div>
-<button id="ajaxButton" type="button" style="position:absolute;top:310px;left:10px;">Make a request</button><script id="cesium_sandcastle_script">
+<script id="cesium_sandcastle_script">
 function startup(Cesium) {
     'use strict';
 //Sandcastle_Begin
@@ -238,19 +237,31 @@ function startup(Cesium) {
             }
         },
         {
-            text : 'AJAX',
-            onselect : function() {
-                var path="http://localhost:8082/hpinfo";
-                $.ajax({
-                    url: path,
-                    data: $('#sentToServer').serialize(),
-                    type:"GET",
-                    dataType:'text',
-                    success: function(res){
-                        alert(res);
+            text : 'ajaxButton',
+            onselect : function(){
+            var httpRequest;
+                httpRequest = new XMLHttpRequest();
+                if (!httpRequest) 
+                {
+                    alert('Giving up :( Cannot create an XMLHTTP instance');
+                    return false;
+                }
+                httpRequest.onreadystatechange = alertContents;
+                httpRequest.open('GET', '../Source/hospital.json');
+                httpRequest.send();
+            
+            function alertContents() 
+               {
+                if (httpRequest.readyState === XMLHttpRequest.DONE) 
+                    {
+                    if (httpRequest.status === 200) 
+                        {
+                            alert(httpRequest.responseText);
+                        } else {alert('There was a problem with the request.');}
                     }
-                });
-            }
+                }
+            }      
+            
         },
         {
             text : 'live streaming',
@@ -276,33 +287,6 @@ function startup(Cesium) {
     ]);
 
 
-  (function() 
-        {
-            var httpRequest;
-            document.getElementById("ajaxButton").addEventListener('click', makeRequest);
-            function makeRequest() 
-            {
-                httpRequest = new XMLHttpRequest();
-                if (!httpRequest) 
-                {
-                    alert('Giving up :( Cannot create an XMLHTTP instance');
-                    return false;
-                }
-                httpRequest.onreadystatechange = alertContents;
-                httpRequest.open('GET', '../Source/hospital.json');
-                httpRequest.send();
-            }
-            function alertContents() 
-               {
-                if (httpRequest.readyState === XMLHttpRequest.DONE) 
-                    {
-                    if (httpRequest.status === 200) 
-                        {
-                            alert(httpRequest.responseText);
-                        } else {alert('There was a problem with the request.')}
-                    }
-                }
-        }())    ;  
 
 
 //Sandcastle_End
