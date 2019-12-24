@@ -3,14 +3,14 @@
 # Discussion, issues and change requests at:
 #   https://github.com/nodesource/distributions
 #
-# Script to install the NodeSource Node.js 8.x LTS Carbon repo onto a
+# Script to install the NodeSource Node.js 6.x LTS Boron repo onto a
 # Debian or Ubuntu system.
 #
 # Run as root or insert `sudo -E` before `bash`:
 #
-# curl -sL https://deb.nodesource.com/setup_8.x | bash -
+# curl -sL https://deb.nodesource.com/setup_6.x | bash -
 #   or
-# wget -qO- https://deb.nodesource.com/setup_8.x | bash -
+# wget -qO- https://deb.nodesource.com/setup_6.x | bash -
 #
 # CONTRIBUTIONS TO THIS SCRIPT
 #
@@ -21,9 +21,9 @@
 
 
 export DEBIAN_FRONTEND=noninteractive
-SCRSUFFIX="_8.x"
-NODENAME="Node.js 8.x LTS Carbon"
-NODEREPO="node_8.x"
+SCRSUFFIX="_6.x"
+NODENAME="Node.js 6.x LTS Boron"
+NODEREPO="node_6.x"
 NODEPKG="nodejs"
 
 print_status() {
@@ -229,27 +229,32 @@ check_alt "Linux Mint"    "sylvia"   "Ubuntu" "xenial"
 check_alt "Linux Mint"    "tara"     "Ubuntu" "bionic"
 check_alt "Linux Mint"    "tessa"    "Ubuntu" "bionic"
 check_alt "Linux Mint"    "tina"     "Ubuntu" "bionic"
+check_alt "Linux Mint"    "tricia"   "Ubuntu" "bionic"
 check_alt "LMDE"          "betsy"    "Debian" "jessie"
 check_alt "LMDE"          "cindy"    "Debian" "stretch"
 check_alt "elementaryOS"  "luna"     "Ubuntu" "precise"
 check_alt "elementaryOS"  "freya"    "Ubuntu" "trusty"
 check_alt "elementaryOS"  "loki"     "Ubuntu" "xenial"
 check_alt "elementaryOS"  "juno"     "Ubuntu" "bionic"
+check_alt "elementaryOS"  "hera"     "Ubuntu" "bionic"
 check_alt "Trisquel"      "toutatis" "Ubuntu" "precise"
 check_alt "Trisquel"      "belenos"  "Ubuntu" "trusty"
 check_alt "Trisquel"      "flidas"   "Ubuntu" "xenial"
 check_alt "Uruk GNU/Linux" "lugalbanda" "Ubuntu" "xenial"
 check_alt "BOSS"          "anokha"   "Debian" "wheezy"
-check_alt "BOSS"          "anoop"   "Debian" "jessie"
+check_alt "BOSS"          "anoop"    "Debian" "jessie"
+check_alt "BOSS"          "drishti"  "Debian" "stretch"
 check_alt "bunsenlabs"    "bunsen-hydrogen" "Debian" "jessie"
 check_alt "bunsenlabs"    "helium"   "Debian" "stretch"
 check_alt "Tanglu"        "chromodoris" "Debian" "jessie"
 check_alt "PureOS"        "green"    "Debian" "sid"
 check_alt "Devuan"        "jessie"   "Debian" "jessie"
 check_alt "Devuan"        "ascii"    "Debian" "stretch"
+check_alt "Devuan"        "beowulf"  "Debian" "buster"
 check_alt "Devuan"        "ceres"    "Debian" "sid"
 check_alt "Deepin"        "panda"    "Debian" "sid"
 check_alt "Deepin"        "unstable" "Debian" "sid"
+check_alt "Deepin"        "stable"   "Debian" "buster"
 check_alt "Pardus"        "onyedi"   "Debian" "stretch"
 check_alt "Liquid Lemur"  "lemur-3"  "Debian" "stretch"
 
