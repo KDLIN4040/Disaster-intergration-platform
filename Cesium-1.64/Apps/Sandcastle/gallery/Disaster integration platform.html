@@ -17,10 +17,23 @@
 
     <style>
     @import url(../templates/bucket.css);
+            #toolbar {
+        background: rgba(42, 42, 42, 0.8);
+        padding: 4px;
+        border-radius: 4px;
+    }
+    #toolbar input {
+        vertical-align: middle;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
 </style>
 <div id="cesiumContainer" class="fullSize"></div>
 <div id="loadingOverlay"><h1>Loading...</h1></div>
-<div id="toolbar"></div>
+<div id="toolbar"><div>Height</div>
+    <input type="range" min="-100.0" max="100.0" step="1" data-bind="value: height, valueUpdate: 'input'">
+    <input type="text" size="5" data-bind="value: height">
+</div>
 <script id="cesium_sandcastle_script">
 function startup(Cesium) {
     'use strict';
@@ -31,6 +44,8 @@ function startup(Cesium) {
 
     var viewer = new Cesium.Viewer('cesiumContainer');
     viewer.scene.globe.enableLighting = false;
+    viewer.scene.globe.depthTestAgainstTerrain = true;
+
     // set the cesium token and map token
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwZTdlNGQxNy03MjJjLTQ2ZjItYjc3MC0zZmMzOWRkZTZkNDYiLCJpZCI6MzczMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTUzODY1MjA0OH0.cy2FnkM4c7dUFQJrrAtKOQtJyFuN1UrLMiBAwUjbs0k';
     Cesium.BingMapsApi.defaultAccessTokenKey ='AtnrXO-GaWfQWtvkf7fq4WHB0bQ7ncFVvLmVS5oAytmnTEVfFnzzTulmkjpqFV3N';
@@ -171,7 +186,7 @@ function startup(Cesium) {
 //tool bar manu
 ///////////////////////////////////////////
     // Add tileset. Do not forget to reduce the default screen space error to 1
-function addtileset(){
+function addtileset1(){
     var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
 	url: '../Source/SampleData/Models/Scene/Production_6(Cesium).json',
     }));
@@ -183,12 +198,56 @@ function addtileset(){
             billboard : 
             {
                 image : pinBuilder.fromColor(Cesium.Color.ROYALBLUE, 48).toDataURL(),
-                verticalOrigin : Cesium.VerticalOrigin.BOTTOM
+                verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+                scale : 1.5
             }
          });
+    var questionPin = viewer.entities.add({
+    name : '失聯',
+    description:'<table border="1"><tr><td>失聯人數</td><td>10</td></tr></table>',
+    position : Cesium.Cartesian3.fromDegrees(120.2611004,23.0052432,40),
+    billboard : {
+        image : pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL(),
+        verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+        scale : 1.5
+    }
+    });
+//Create a red pin representing a hospital from the maki icon set.
+var rescure = Cesium.when(pinBuilder.fromMakiIconId('hospital', Cesium.Color.GREEN, 48), function(canvas) {
+    return viewer.entities.add({
+        name : '待救生還者',
+        description:'<table border="1"><tr><td>待救人數</td><td>20</td></tr></table>',
+        position : Cesium.Cartesian3.fromDegrees(120.2612004,23.0051932,40),
+        billboard : {
+            image : canvas.toDataURL(),
+            verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+            scale : 1.5
+        }
+    });
+});
+    
+            
     viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0.0, -0.3, 0.0));
 }    
+    function addtileset2(){
+    var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+	url: '../Source/SampleData/Models/Hualien1/Production_2(Cesium).json',
+    }));
+    var planPin = viewer.entities.add(
+        {
+            name:"SLAM室內圖",
+            description: '<iframe  width="400px" height="400px" src="../Source/SampleData/slam1.jpg">',
+            position : Cesium.Cartesian3.fromDegrees(120.2613004,23.0051432,40),
+            billboard : 
+            {
+                image : pinBuilder.fromColor(Cesium.Color.ROYALBLUE, 48).toDataURL(),
+                verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+                scale : 2
+            }
+         });
     
+    viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0.0, -0.3, 0.0));
+}    
     
     function add_gym(){
         createModel('../Source/SampleData/Models/test1/scene.gltf',120.208000,23.032460,0,0,1.5,0,0.5 );
@@ -248,9 +307,15 @@ function addtileset(){
             Sandcastle.highlight(add_japanbuilding);
         }},
         {
+        text : '花蓮雲翠大樓',
+        onselect : function() {
+            addtileset2();
+            Sandcastle.highlight(add_japanbuilding);
+        }},
+        {
         text : '維冠大樓',
         onselect : function() {
-            addtileset();
+            addtileset1();
             Sandcastle.highlight(add_japanbuilding);
         }}
     ]);
@@ -314,6 +379,161 @@ function addtileset(){
 
 
 
+
+var viewModel = {
+    height: 0
+};
+
+Cesium.knockout.track(viewModel);
+
+var toolbar = document.getElementById('toolbar');
+Cesium.knockout.applyBindings(viewModel, toolbar);
+
+var tileset = new Cesium.Cesium3DTileset({
+    url: '../Source/SampleData/Models/Hualien1/Production_2(Cesium).json'
+});
+tileset.readyPromise.then(function(tileset) {
+    viewer.scene.primitives.add(tileset);
+    viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0.0, -0.5, tileset.boundingSphere.radius * 2.0));
+}).otherwise(function(error) {
+    console.log(error);
+});
+
+Cesium.knockout.getObservable(viewModel, 'height').subscribe(function(height) {
+    height = Number(height);
+    if (isNaN(height)) {
+        return;
+    }
+
+    var cartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere.center);
+    var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0.0);
+    var offset = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, height);
+    var translation = Cesium.Cartesian3.subtract(offset, surface, new Cesium.Cartesian3());
+    tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
+});
+
+
+if (!viewer.scene.pickPositionSupported) {
+    window.alert('This browser does not support pickPosition.');
+}
+
+
+
+
+
+
+viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+function createPoint(worldPosition) {
+    var point = viewer.entities.add({
+        position : worldPosition,
+        point : {
+            color : Cesium.Color.RED,
+            pixelSize : 10,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+        }
+    });
+    return point;
+}
+var drawingMode = 'line';
+function drawShape(positionData) {
+    var shape;
+    if (drawingMode === 'line') {
+        shape = viewer.entities.add({
+            polyline : {
+                positions : positionData,
+                clampToGround : true,
+                material: new Cesium.ColorMaterialProperty(Cesium.Color.GREEN.withAlpha(0.3)),
+                width : 50
+            }
+        });
+    }
+    else if (drawingMode === 'polygon') {
+        shape = viewer.entities.add({
+            polygon: {
+                hierarchy: positionData,
+                material: new Cesium.ColorMaterialProperty(Cesium.Color.RED.withAlpha(0.3))
+            }
+        });
+    }
+    return shape;
+}
+var activeShapePoints = [];
+var activeShape;
+var floatingPoint;
+var handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+handler.setInputAction(function(event) {
+    // We use `viewer.scene.pickPosition` here instead of `viewer.camera.pickEllipsoid` so that
+    // we get the correct point when mousing over terrain.
+    var earthPosition = viewer.scene.pickPosition(event.position);
+    // `earthPosition` will be undefined if our mouse is not over the globe.
+    if (Cesium.defined(earthPosition)) {
+        if (activeShapePoints.length === 0) {
+            floatingPoint = createPoint(earthPosition);
+            activeShapePoints.push(earthPosition);
+            var dynamicPositions = new Cesium.CallbackProperty(function () {
+                if (drawingMode === 'polygon') {
+                    return new Cesium.PolygonHierarchy(activeShapePoints);
+                }
+                return activeShapePoints;
+            }, false);
+            activeShape = drawShape(dynamicPositions);
+        }
+        activeShapePoints.push(earthPosition);
+        createPoint(earthPosition);
+    }
+}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+handler.setInputAction(function(event) {
+    if (Cesium.defined(floatingPoint)) {
+        var newPosition = viewer.scene.pickPosition(event.endPosition);
+        if (Cesium.defined(newPosition)) {
+            floatingPoint.position.setValue(newPosition);
+            activeShapePoints.pop();
+            activeShapePoints.push(newPosition);
+        }
+    }
+}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+// Redraw the shape so it's not dynamic and remove the dynamic shape.
+function terminateShape() {
+    activeShapePoints.pop();
+    drawShape(activeShapePoints);
+    viewer.entities.remove(floatingPoint);
+    viewer.entities.remove(activeShape);
+    floatingPoint = undefined;
+    activeShape = undefined;
+    activeShapePoints = [];
+}
+handler.setInputAction(function(event) {
+    terminateShape();
+}, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+
+var options = [
+    {
+    text : '標記工具',
+        onselect : function(){
+        terminateShape();
+
+        }
+},
+    {
+    text : 'Draw Lines',
+    onselect : function() {
+        if (!Cesium.Entity.supportsPolylinesOnTerrain(viewer.scene)) {
+            window.alert('This browser does not support polylines on terrain.');
+        }
+
+        terminateShape();
+        drawingMode = 'line';
+    }
+}, {
+    text : 'Draw Polygons',
+    onselect : function() {
+        terminateShape();
+        drawingMode = 'polygon';
+    }},
+    ];
+
+Sandcastle.addToolbarMenu(options);
 
 //Sandcastle_End
     Sandcastle.finishedLoading();
