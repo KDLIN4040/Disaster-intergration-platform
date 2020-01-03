@@ -192,6 +192,7 @@ function addtileset1(){
     }));
     var planPin = viewer.entities.add(
         {
+            id:'id',
             name:"SLAM室內圖",
             description: '<iframe  width="400px" height="400px" src="../Source/SampleData/slam1.jpg">',
             position : Cesium.Cartesian3.fromDegrees(120.2613004,23.0051432,40),
@@ -535,7 +536,29 @@ var options = [
 
 Sandcastle.addToolbarMenu(options);
 
-//Sandcastle_End
+var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+        handler.setInputAction(function (movement) {
+
+            var pick = viewer.scene.pick(movement.position);
+
+            if (Cesium.defined(pick) && (pick.id.id === 'id')) {
+                     $.ajax({ 
+           url: 'http://localhost:8082/ajax',
+           type: 'get',
+           cache: false, 
+           data: { field1: 1, field2: 2 }, 
+           success: function(data){
+              alert('Success!')
+           }
+           , error: function(jqXHR, textStatus, err){
+               alert('text status '+textStatus+', err '+err)
+           }
+        })
+                
+            }
+
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);//Sandcastle_End
     Sandcastle.finishedLoading();
 }
 if (typeof Cesium !== 'undefined') {
