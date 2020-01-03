@@ -448,7 +448,14 @@ function drawShape(positionData) {
             }
         });
     }
-    else if (drawingMode === 'polygon') {
+    else if (drawingMode === 'polygon(red)') {
+        shape = viewer.entities.add({
+            polygon: {
+                hierarchy: positionData,
+                material: new Cesium.ColorMaterialProperty(Cesium.Color.RED.withAlpha(0.3))
+            }
+        });}
+    else if (drawingMode === 'polygon(green)') {
         shape = viewer.entities.add({
             polygon: {
                 hierarchy: positionData,
@@ -472,7 +479,7 @@ handler.setInputAction(function(event) {
             floatingPoint = createPoint(earthPosition);
             activeShapePoints.push(earthPosition);
             var dynamicPositions = new Cesium.CallbackProperty(function () {
-                if (drawingMode === 'polygon') {
+                if (drawingMode != 'line') {
                     return new Cesium.PolygonHierarchy(activeShapePoints);
                 }
                 return activeShapePoints;
@@ -527,10 +534,16 @@ var options = [
         drawingMode = 'line';
     }
 }, {
-    text : 'Draw Polygons',
+    text : 'Draw Polygons(red)',
     onselect : function() {
         terminateShape();
-        drawingMode = 'polygon';
+        drawingMode = 'polygon(red)';
+    }},
+    {
+    text : 'Draw Polygons(green)',
+    onselect : function() {
+        terminateShape();
+        drawingMode = 'polygon(green)';
     }},
     ];
 
