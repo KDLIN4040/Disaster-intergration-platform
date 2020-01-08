@@ -1,0 +1,99 @@
+﻿#nav {
+    width: 100%;
+    float: left;
+    /* margin: 0 0 1em 0;  */  
+    margin: 0 0 0 0;    
+    padding: 0;	        
+    background-color: #f2f2f2;      /*  背景 白色 #f2f2f2 亮度 95%  */	       
+    background-color: #4040a1;      /*  背景 藍色 #4040a1 亮度 44%  */
+    border-bottom: 1px solid #ccc;  /* 灰色 #ccc 亮度 80% */
+    }
+#nav ul {
+    list-style: none;
+    width: 900px;
+    margin: 0 auto;
+    padding: 0; }
+#nav li {
+    float: left; }
+    
+#nav li a {                            /* 未連結 */
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    font-weight: bold;	       
+    color: #069;                       /* 字顏色 類似深藍 #69*/
+    color: white;                      /* 字顏色 純白  */
+    border-right: 1px solid #ccc; }
+/*    
+#nav li:first-child a {
+    border-left: 1px solid #ccc; }
+    */
+    
+#nav li a:hover {                       /* 滑鼠移至連結 */
+   
+    color: #c00;                        /* 字顏色 #c00 #紅色 40% */
+    color: #4040a1;                     /*  字顏色 藍色 #4040a1 亮度 44%  */
+   
+     background-color: #fff;            /*  背景 #fff 純白  */
+     background-color: #eee;            /*  背景 #eee 白黑 93%  */
+
+    }
+    
+#divCalendar table {
+    border-collapse: separate;        /* 空值格子不會有格線*/
+    empty-cells: hide;  
+}
+/*  以下 IE OK,Chrome NG
+#divCalendar tbody {
+   border: 1px solid lightgrey;
+ 
+} 
+
+#divCalendar td {
+    background-color: #fff;
+    border: 1px solid lightgrey;    
+}
+
+#divCalendar td:hover {
+    background-color: #eee;   
+    background-color:lightgrey;
+    border: 1px solid lightgrey;
+     
+}  
+*/
+.rotate {
+   DIRECTION: ltr; 
+   writing-mode: tb-rl;
+    -webkit-writing-mode: vertical-rl;      
+    writing-mode: vertical-rl;
+   -webkit-writing-mode:vertical-rl; 
+   writing-mode: tb-rl;
+   WRITING-MODE: tb-rl;
+   writing-mode:tb-rl;
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+
+  /* also accepts left, right, top, bottom coordinates; not required, but a good idea for styling */
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+
+  /* Should be unset in IE9+ I think. */
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+html, body {
+    margin: 0;
+    padding: 0;
+}
+legend { 
+  padding-top: 0;
+  padding-bottom: 0;
+}
+fieldset, td { 
+  padding-top: 0;
+}
