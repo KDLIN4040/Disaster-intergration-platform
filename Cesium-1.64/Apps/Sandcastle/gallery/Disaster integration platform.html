@@ -228,11 +228,11 @@ function addtileset1(){
 });
      var remotecontrol = viewer.entities.add({
     name : 'gpiotest',
-         description:'<iframe  width="600px" height="600px" src="http://192.168.11.48:81">',
-    position : Cesium.Cartesian3.fromDegrees(120.2611004,23.0052432,50),
+         description:'<iframe  width="600px" height="600px" src="http://192.168.11.41:81">',
+    position : Cesium.Cartesian3.fromDegrees(120.2611004,23.0053432,30),
     billboard : {
-        image : pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL(),
-        verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+        image : pinBuilder.fromColor(Cesium.Color.ROYALBLUE, 48).toDataURL(),
+                verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
         scale : 1.5
     }
     });
