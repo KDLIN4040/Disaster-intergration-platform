@@ -198,5 +198,35 @@
             process.exit(1);
         }
     });
+    const { spawn } = require('child_process');
+    
 
+    app.get('/ajax', function(req, res) {
+
+        const ls = spawn('roslaunch',['demo_revo_lds.launch'],{cwd:'/home/bbtan/catkin_ws/src/cartographer_ros/cartographer_ros/launch'});
+
+        ls.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+        });
+
+        ls.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`);
+        });
+
+        ls.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+        });
+        /*
+        var child = exec('roslaunch',['/Home/catkin_ws/src/cartographer_ros/cartographer_ros/launch/demo_revo_lds.launch'], 
+            function(error, stdout, stderr){
+                if(error) {
+        console.error('error: ' + error);
+        return;
+    }
+        console.info('cat child_process.js stdout: ');
+        console.log(stdout);
+        });
+    });
+    */
+});
 })();
