@@ -442,7 +442,7 @@ function drawShape(positionData) {
             polyline : {
                 positions : positionData,
                 clampToGround : true,
-                material: new Cesium.ColorMaterialProperty(Cesium.Color.GREEN.withAlpha(0.3)),
+                material: new Cesium.ColorMaterialProperty(Cesium.Color.WHITE),
                 width : 50
             }
         });
@@ -458,7 +458,7 @@ function drawShape(positionData) {
         shape = viewer.entities.add({
             polygon: {
                 hierarchy: positionData,
-                material: new Cesium.ColorMaterialProperty(Cesium.Color.RED.withAlpha(0.3))
+                material: new Cesium.ColorMaterialProperty(Cesium.Color.GREEN.withAlpha(0.3))
             }
         });
     }
