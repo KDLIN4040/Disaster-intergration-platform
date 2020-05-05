@@ -129,7 +129,7 @@ function startup(Cesium) {
            {
                color : color,
                image:'../Source/ICON/PNG/HOSPITAL-COLOR.png',
-               scale : 0.1,
+               scale : 0.2,
                verticalOrigin : Cesium.VerticalOrigin.BOTTOM
 
            }
@@ -757,7 +757,7 @@ function PickPosition(){
         {
             text : 'toolbox',
             onselect : function() {
-            viewer.entities.removeAll();
+            //viewer.entities.removeAll();
             }
         },
         {
@@ -817,7 +817,7 @@ function PickPosition(){
         onselect : function(){
          viewer.scene.globe.depthTestAgainstTerrain = true;   
          drawingMode = false;
-         viewer.entities.removeAll();
+         //viewer.entities.removeAll();
 
         
         }
@@ -864,7 +864,7 @@ var position = [
         text:'position',
         onselect : function(){
          drawingMode = false;
-         viewer.entities.removeAll();
+         //viewer.entities.removeAll();
 
         
         }
