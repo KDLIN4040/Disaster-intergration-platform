@@ -17,7 +17,7 @@
 
     <style>
     @import url(../templates/bucket.css);
-            #toolbar {
+    #toolbar {
         background: rgba(42, 42, 42, 0.8);
         padding: 4px;
         border-radius: 4px;
@@ -26,6 +26,10 @@
         vertical-align: middle;
         padding-top: 2px;
         padding-bottom: 2px;
+    }
+    .cesium-infoBox {
+        width: 80%;
+        max-width: none;
     }
 </style>
 <div id="cesiumContainer" class="fullSize"></div>
@@ -38,19 +42,22 @@
 function startup(Cesium) {
     'use strict';
 //Sandcastle_Begin
-//////////////////////////////////////////////
-//initial the cesium platform
-//////////////////////////////////////////////
-    
-    // set the cesium token and map token
+// set the cesium token and map token
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwZTdlNGQxNy03MjJjLTQ2ZjItYjc3MC0zZmMzOWRkZTZkNDYiLCJpZCI6MzczMSwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTUzODY1MjA0OH0.cy2FnkM4c7dUFQJrrAtKOQtJyFuN1UrLMiBAwUjbs0k';
     Cesium.BingMapsApi.defaultAccessTokenKey ='AtnrXO-GaWfQWtvkf7fq4WHB0bQ7ncFVvLmVS5oAytmnTEVfFnzzTulmkjpqFV3N';
+    
+    var viewer = new Cesium.Viewer('cesiumContainer', {
+    selectionIndicator : false,
+});
 
-    var viewer = new Cesium.Viewer('cesiumContainer');
     viewer.scene.globe.enableLighting = false;
-    viewer.scene.globe.depthTestAgainstTerrain = true;
+    viewer.scene.globe.depthTestAgainstTerrain = true;   
+    var iframe = document.getElementsByClassName('cesium-infoBox-iframe')[0];
+    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms'); 
+    var pinBuilder = new Cesium.PinBuilder();
 
-   
+    
+     
     // set the initial position in taiwan
     var initialPosition = new Cesium.Cartesian3.fromDegrees(120.26115, 23.006,  1000000);
     var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(0, -90, 0);
@@ -85,6 +92,10 @@ function startup(Cesium) {
 //3d models in map
 ////////////////////////////////////////////////     
 
+  //add building information
+
+
+
     // create model function     
     function createModel(url,degrees1,degrees2,height,heading,pitching,roll,scale) {
        viewer.entities.removeAll();
@@ -117,24 +128,20 @@ function startup(Cesium) {
            billboard:
            {
                color : color,
-               image:'../Source/Images/hospital/yellostar.png',
-               scale : 0.2,
+               image:'../Source/ICON/PNG/HOSPITAL-COLOR.png',
+               scale : 0.1,
                verticalOrigin : Cesium.VerticalOrigin.BOTTOM
 
            }
       });
     }
 
-    //add building information
-
-    var iframe = document.getElementsByClassName('cesium-infoBox-iframe')[0];
-    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms'); 
-    var pinBuilder = new Cesium.PinBuilder();
-
+  
 
 
     //維冠大樓
     function addtileset1(){
+        viewer.entities.removeAll();
         var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
         url: '../Source/SampleData/Models/Scene/Production_6(Cesium).json',
         }));
@@ -146,9 +153,9 @@ function startup(Cesium) {
                 position : Cesium.Cartesian3.fromDegrees(120.2613004,23.0051432,40),
                 billboard : 
                 {
-                    image : pinBuilder.fromColor(Cesium.Color.ROYALBLUE, 48).toDataURL(),
+                    image : '../Source/ICON/PNG/ROBOTIC.png',
                     verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
-                    scale : 1.5
+                    scale : 0.1
                 }
              });
         var questionPin = viewer.entities.add({
@@ -162,27 +169,26 @@ function startup(Cesium) {
         }
         });
         //Create a red pin representing a hospital from the maki icon set.
-        var rescure = Cesium.when(pinBuilder.fromMakiIconId('hospital', Cesium.Color.GREEN, 48), function(canvas) {
-            return viewer.entities.add({
+        var rescure = viewer.entities.add({
             name : '待救生還者',
             description:'<table border="1"><tr><td>待救人數</td><td>20</td></tr></table>',
             position : Cesium.Cartesian3.fromDegrees(120.2612004,23.0051932,40),
             billboard : {
-                image : canvas.toDataURL(),
+                image : pinBuilder.fromText('+', Cesium.Color.GREEN, 48).toDataURL(),
                 verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
                 scale : 1.5
             }
         });
-        });
         var remotecontrol = viewer.entities.add({
             name : 'gpiotest',
-            description:'<iframe  width="600px" height="600px" src="http://192.168.11.48:81">',
+            description:'<iframe  width="1440px" height="900px" src="http://localhost:5000">',
             position : Cesium.Cartesian3.fromDegrees(120.2611004,23.0052432,50),
             billboard : {
                 image : pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL(),
                 verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
                 scale : 1.5
             }
+           
         });
     
             
@@ -190,9 +196,42 @@ function startup(Cesium) {
     }   
     //花蓮雲翠大樓
     function addtileset2(){
+        viewer.entities.removeAll();
         var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
         url: '../Source/SampleData/Models/Hualien1/Production_2(Cesium).json',
         }));
+         //adjust the building height
+        var viewModel = {
+        height: 0
+        };
+
+        Cesium.knockout.track(viewModel);
+        
+        var toolbar = document.getElementById('toolbar');
+        Cesium.knockout.cleanNode(toolbar);
+        Cesium.knockout.applyBindings(viewModel, toolbar);
+
+        tileset.readyPromise.then(function(tileset) {
+            viewer.scene.primitives.add(tileset);
+            viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0.0, -0.5, tileset.boundingSphere.radius * 2.0));
+        }).otherwise(function(error) {
+            console.log(error);
+        });
+
+        Cesium.knockout.getObservable(viewModel, 'height').subscribe(function(height) {
+            height = Number(height);
+            if (isNaN(height)) {
+                return;
+            }
+            var cartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere.center);
+            var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0.0);
+            var offset = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, height);
+            var translation = Cesium.Cartesian3.subtract(offset, surface, new Cesium.Cartesian3());
+            tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
+        });
+        if (!viewer.scene.pickPositionSupported) {
+            window.alert('This browser does not support pickPosition.');
+        }
         var planPin = viewer.entities.add(
             {
                 name:"SLAM室內圖",
@@ -209,78 +248,121 @@ function startup(Cesium) {
         viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0.0, -0.3, 0.0));
     }    
     
+
+    // CAUTION: Only disable iframe sandbox if the descriptions come from a trusted source.
+    viewer.infoBox.frame.setAttribute('sandbox', 'allow-same-origin allow-popups allow-forms allow-scripts allow-top-navigation');
+    
+    var entity ;
     //安南活動中心
     function add_gym(){
         createModel('../Source/SampleData/Models/test1/scene.gltf',120.208000,23.032460,0,0,1.5,0,0.5 );
         
-        var planPin = viewer.entities.add(
+        var planpin = viewer.entities.add(
         {
+            id :"360picture",
             name:"活動中心全景圖",
             description: '<iframe src="https://www.360cities.net/embed_iframe/panorama_tmp-8049" width="500" height="400" frameborder="0" bgcolor="#000000" target="_blank" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe><br/><a title="Panorama photos of 安西里活動中心 on 360cities.net" href="https://www.360cities.net/image/panorama_tmp-8049">安西里活動中心</a>',
             position : Cesium.Cartesian3.fromDegrees(120.20800,23.032478,10),
             billboard : 
             {
                 image : pinBuilder.fromColor(Cesium.Color.ROYALBLUE, 48).toDataURL(),
-                verticalOrigin : Cesium.VerticalOrigin.BOTTOM
+                verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
             }
+            
          });
          
-        var planPin2 = viewer.entities.add(
+        var planpin2 =viewer.entities.add(
         {
+            id :"streaming",
             name:"活動中心直播影片",
             description:'<iframe width="500" height="400" src="https://www.youtube.com/embed/Bs1ZcKhnxSo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
             position: Cesium.Cartesian3.fromDegrees(120.20800,23.032500,10),
             billboard:
             {
-                image : pinBuilder.fromColor(Cesium.Color.LIME, 48).toDataURL(),
-                verticalOrigin : Cesium.VerticalOrigin.BOTTOM
+                image : pinBuilder.fromColor(Cesium.Color.GREEN, 48).toDataURL(),
+                verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
             }          
         });
+        
+                 
         viewer.camera.flyTo({
             destination : Cesium.Cartesian3.fromDegrees(120.208000,23.032460,100)
         });
     }
+
+        //add event listener which change the billboard.color when click the button
     
-    //日本建築(test)
-    function add_japanbuilding(){
-        createModel('../Source/SampleData/Models/shanghai_city_scene/scene.gltf',120.261150,23.006000,0,0,0,0,0.1 );  
-        viewer.camera.flyTo({
-            destination : Cesium.Cartesian3.fromDegrees(120.261150,23.006000,200)
+
+         // Since the viewer is newly constructed, the iframe is still about:blank.
+        // This listens for the iframe to change to the Cesium description template,
+        // which only happens once at startup.
+        //
+viewer.selectedEntityChanged.addEventListener(function(entity) {
+            document.addEventListener('keydown', keyDownHandler, false);
+            function keyDownHandler(event){
+                if(event.keyCode == 20) {  
+                    try{
+                        entity.billboard.image = pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL();
+                        entity.billboard.scale = 1.5;
+                        document.removeEventListener('keydown', keyDownHandler, false);
+                    }catch(exception){
+                        console.log('error');
+                        document.removeEventListener('keydown', keyDownHandler, false);
+                    }   
+                }else if(event.keyCode==17){             
+                    try{
+                        entity.billboard.image = pinBuilder.fromText('+', Cesium.Color.GREEN, 48).toDataURL();
+                        entity.billboard.scale = 1.5;
+                        document.removeEventListener('keydown', keyDownHandler, false);
+                    }catch(exception){
+                        console.log('error');
+                        document.removeEventListener('keydown', keyDownHandler, false);
+                    }
+                }
+            }    
         });
-    }
+    
 
-    var viewModel = {
-    height: 0
-    };
+function addtileset3() {
 
-    Cesium.knockout.track(viewModel);
+  // Bounding sphere
+  var boundingSphere = new Cesium.BoundingSphere(Cesium.Cartesian3.fromDegrees(120.221197, 22.99556662, 84.86832984), 25.0);
 
-    var toolbar = document.getElementById('toolbar');
-    Cesium.knockout.applyBindings(viewModel, toolbar);
 
-    var tileset = new Cesium.Cesium3DTileset({
-        url: '../Source/SampleData/Models/Hualien1/Production_2(Cesium).json'
-    });
-    tileset.readyPromise.then(function(tileset) {
-        viewer.scene.primitives.add(tileset);
-        viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0.0, -0.5, tileset.boundingSphere.radius * 2.0));
-    }).otherwise(function(error) {
-        console.log(error);
-    });
 
-    Cesium.knockout.getObservable(viewModel, 'height').subscribe(function(height) {
-        height = Number(height);
-        if (isNaN(height)) {
-            return;
-        }
-        var cartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere.center);
-        var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0.0);
-        var offset = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, height);
-        var translation = Cesium.Cartesian3.subtract(offset, surface, new Cesium.Cartesian3());
-        tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
-    });
-    if (!viewer.scene.pickPositionSupported) {
-        window.alert('This browser does not support pickPosition.');
+    viewer.camera.flyToBoundingSphere(boundingSphere);
+  // Set custom initial position
+  viewer.camera.flyToBoundingSphere(boundingSphere, {duration: 0});
+
+  // Add tileset. Do not forget to reduce the default screen space error to 1
+  var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+  url: '../Source/SampleData/Models/NCKU_20181201/Production_2(Cesium).json',
+  }));
+
+  tileset.readyPromise.then(function(tileset) {
+    var height = -20.0; // Set this to anything
+    var cartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere.center);
+    var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0.0);
+    var offset = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, height);
+    var translation = Cesium.Cartesian3.subtract(offset, surface, new Cesium.Cartesian3());
+    tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
+  });
+    
+    
+    var robotic = viewer.entities.add({
+            name : 'interface',
+            //description:'<iframe  width="400px" height="400px" src="../Source/SampleData/slam1.jpg">',
+            description:'<iframe  width="1440px" height="900px" src="http://localhost:5000">',
+            position : Cesium.Cartesian3.fromDegrees(120.22139,22.99661,20),
+            billboard : {
+                image : pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL(),
+                verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+                scale : 1.5
+            }
+           
+        });
+
+
     }
 
 
@@ -309,8 +391,8 @@ function startup(Cesium) {
                 polyline : {
                     positions : positionData,
                     clampToGround : true,
-                    material: new Cesium.ColorMaterialProperty(Cesium.Color.GREEN.withAlpha(0.3)),
-                    width : 50
+                    material: new Cesium.ColorMaterialProperty(Cesium.Color.YELLOW),
+                    width : 20
                 }
             });
         }
@@ -318,14 +400,14 @@ function startup(Cesium) {
             shape = viewer.entities.add({
                 polygon: {
                     hierarchy: positionData,
-                    material: new Cesium.ColorMaterialProperty(Cesium.Color.RED.withAlpha(0.3))
+                    material: new Cesium.ColorMaterialProperty(Cesium.Color.RED)
                 }
             });}
         else if (drawingMode === 'polygon(green)') {
             shape = viewer.entities.add({
                 polygon: {
                     hierarchy: positionData,
-                    material: new Cesium.ColorMaterialProperty(Cesium.Color.GREEN.withAlpha(0.3))
+                    material: new Cesium.ColorMaterialProperty(Cesium.Color.GREEN)
                 }
             });
         }
@@ -340,6 +422,9 @@ function startup(Cesium) {
         // we get the correct point when mousing over terrain.
         var earthPosition = viewer.scene.pickPosition(event.position);
         // `earthPosition` will be undefined if our mouse is not over the globe.
+            if(!drawingMode){
+                return;
+        }
         if (Cesium.defined(earthPosition)) {
             if (activeShapePoints.length === 0) {
                 floatingPoint = createPoint(earthPosition);
@@ -381,16 +466,101 @@ function startup(Cesium) {
         terminateShape();
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
+
+
+function CustomLine() {    
+    this.positions=[];
+    this.markers=[];
+
+    var that=this;
+
+    this.line=viewer.entities.add({
+        polyline : {
+            // This callback updates positions each frame.
+            positions : new Cesium.CallbackProperty(function(time, result) {
+                return that.positions;
+            }, false),
+            width : 3,
+            clampToGround:true,
+            material : Cesium.Color.YELLOW
+        }
+    });
+}
+
+
+    CustomLine.prototype.addPoint=function (position) {
+        var that=this;
+        var n=this.positions.length;
+        this.positions[n]=position;
+        var pinBuilder = new Cesium.PinBuilder();
+
+        var marker=viewer.entities.add({
+            position : new Cesium.CallbackProperty(function(time, result) {
+                return that.positions[n];
+            }, false),
+            billboard : {
+                image : pinBuilder.fromText(n+1, Cesium.Color.RED, 48).toDataURL(),
+                heightReference:Cesium.HeightReference.CLAMP_TO_GROUND,
+                //verticalOrigin : Cesium.VerticalOrigin.BOTTOM
+            }
+        });
+
+        this.markers.push(marker);
+    };
+    CustomLine.prototype.removeAll=function () {
+        for(var i=0;i<this.markers.length;i++){
+            viewer.entities.remove(this.markers[i]);
+        }
+
+        this.markers=[];
+        this.positions=[];
+    };
+
+    var customLine=new CustomLine();
+    var drawing=false;
+
+    var handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+    handler.setInputAction(function(event) {
+        if(!drawing){
+            return;
+        }
+        var mousePosition = viewer.scene.pickPosition(event.position);
+        if (Cesium.defined(mousePosition)) {
+            customLine.addPoint(mousePosition);
+        }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+    handler.setInputAction(function(event) {    
+            if(!drawing){
+                return;
+            }
+        var mousePosition = viewer.scene.pickPosition(event.endPosition);
+        if (Cesium.defined(mousePosition)) {        
+            var n=customLine.positions.length;
+            if(n===0){
+                customLine.addPoint(mousePosition);
+            }else {
+                customLine.positions[n-1]=mousePosition;
+            }
+        }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+    handler.setInputAction(function(event) {
+        if(!drawing){
+            return;
+        }
+
+        drawing=false;    
+    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK );
+
+
 //////////////////////////////////////////
 //roslaunch cartographer
 //////////////////////////////////////////
-
+    /*
     var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-
             handler.setInputAction(function (movement) {
-
                 var pick = viewer.scene.pick(movement.position);
-
                 if (Cesium.defined(pick) && (pick.id.id === 'id')) {
                          $.ajax({ 
                url: 'http://localhost:8082/ajax',
@@ -406,9 +576,8 @@ function startup(Cesium) {
             })
                     
                 }
-
             }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
+*/
 
 //////////////////////////////////////
 //hosipital information
@@ -459,6 +628,93 @@ function startup(Cesium) {
 
 
 
+/////////////////////////////////////////////////////////
+//position
+/////////////////////////////////////////////////////////
+function ShowCartographic(){
+    var entity = viewer.entities.add({
+        label : {
+            show : false,
+            showBackground : true,
+            font : '14px monospace',
+            horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
+            verticalOrigin : Cesium.VerticalOrigin.TOP,
+            pixelOffset : new Cesium.Cartesian2(15, 0)
+        }
+    });
+
+    // Mouse over the globe to see the cartographic position
+    handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    handler.setInputAction(function(movement) {
+        var cartesian = viewer.camera.pickEllipsoid(movement.endPosition, viewer.scene.globe.ellipsoid);
+        if (cartesian) {
+            var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+            var longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(2);
+            var latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(2);
+
+            entity.position = cartesian;
+            entity.label.show = true;
+            entity.label.text =
+                'Lon: ' + ('   ' + longitudeString).slice(-7) + '\u00B0' +
+                '\nLat: ' + ('   ' + latitudeString).slice(-7) + '\u00B0';
+        } else {
+            entity.label.show = false;
+        }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+};
+
+function PickPosition(){
+    
+     var labelEntity = viewer.entities.add({
+        label : {
+            show : false,
+            showBackground : true,
+            font : '20px monospace',
+            horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
+            verticalOrigin : Cesium.VerticalOrigin.TOP,
+            pixelOffset : new Cesium.Cartesian2(15, 0)
+        }
+    });
+
+    // Mouse over the globe to see the cartographic position
+    handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+    handler.setInputAction(function(movement) {
+
+        var foundPosition = false;
+
+        var scene = viewer.scene;
+        if (scene.mode !== Cesium.SceneMode.MORPHING) {
+            var pickedObject = viewer.scene.pick(movement.endPosition);
+            if (scene.pickPositionSupported && Cesium.defined(pickedObject)){
+                var cartesian = viewer.scene.pickPosition(movement.endPosition);
+
+                if (Cesium.defined(cartesian)) {
+                    var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+                    var longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(5);
+                    var latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(5);
+                    var heightString = cartographic.height.toFixed(2);
+
+                    labelEntity.position = cartesian;
+                    labelEntity.label.show = true;
+                    labelEntity.label.text =
+                        'Lon: ' + ('   ' + longitudeString) + '\u00B0' +
+                        '\nLat: ' + ('   ' + latitudeString)+ '\u00B0' +
+                        '\nAlt: ' + ('   ' + heightString).slice(-7) + 'm';
+
+                    labelEntity.label.eyeOffset = new Cesium.Cartesian3(0.0, 0.0, -cartographic.height * (scene.mode === Cesium.SceneMode.SCENE2D ? 1.5 : 1.0));
+
+                    foundPosition = true;
+                }
+            }
+        }
+
+        if (!foundPosition) {
+            labelEntity.label.show = false;
+        }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+};
+
+
 
 ////////////////////////////////////////////
 //tool bar manu
@@ -476,25 +732,25 @@ function startup(Cesium) {
         onselect : function() {
             add_gym();
             Sandcastle.highlight(add_gym);
-        }},
-        {
-        text : 'Japanbuilding',
-        onselect : function() {
-            add_japanbuilding();
-            Sandcastle.highlight(add_japanbuilding);
-        }},
+            }
+        },
         {
         text : '花蓮雲翠大樓',
         onselect : function() {
             addtileset2();
-            Sandcastle.highlight(add_japanbuilding);
-        }},
+            }
+        },
         {
         text : '維冠大樓',
         onselect : function() {
-            addtileset1();
-            Sandcastle.highlight(add_japanbuilding);
-        }}
+            addtileset1();            }
+        },
+        {text: 'NCKU',
+        onselect : function(){
+            addtileset3();
+        }
+        }
+        
     ]);
 
     Sandcastle.addToolbarMenu([
@@ -555,12 +811,15 @@ function startup(Cesium) {
     ]);
 
 
-    var options = [
+    var markingTool = [
     {
-    text : '標記工具',
+    text : 'Marking Tool',
         onselect : function(){
-        terminateShape();
+         viewer.scene.globe.depthTestAgainstTerrain = true;   
+         drawingMode = false;
+         viewer.entities.removeAll();
 
+        
         }
 },
     {
@@ -585,9 +844,48 @@ function startup(Cesium) {
         terminateShape();
         drawingMode = 'polygon(green)';
     }},
+    {
+    text : 'StartDraw',
+    onselect : function() {
+         drawing=true;
+         customLine.removeAll();
+    }},      
+    {
+    text : 'StopDraw',
+    onselect : function() {
+         drawing=false;
+         customLine.removeAll();
+    }}
     ];
+Sandcastle.addToolbarMenu(markingTool);
 
-    Sandcastle.addToolbarMenu(options);
+var position = [
+    {
+        text:'position',
+        onselect : function(){
+         drawingMode = false;
+         viewer.entities.removeAll();
+
+        
+        }
+    },
+    {
+        text:'Show Cartographic',
+        onselect: function(){
+            //viewer.scene.globe.depthTestAgainstTerrain = false;
+            ShowCartographic();
+        }},
+    {
+        text:'PickPosition',
+        onselect: function(){
+            PickPosition();
+    }
+    }
+        ];
+        
+Sandcastle.addToolbarMenu(position);
+
+
 //Sandcastle_End
     Sandcastle.finishedLoading();
 }
