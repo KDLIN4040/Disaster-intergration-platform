@@ -28,7 +28,7 @@
         padding-bottom: 2px;
     }
     .cesium-infoBox {
-        width: 80%;
+        width: 50%;
         max-width: none;
     }
 </style>
@@ -351,8 +351,8 @@ function addtileset3() {
     
     var robotic = viewer.entities.add({
             name : 'interface',
-            //description:'<iframe  width="400px" height="400px" src="../Source/SampleData/slam1.jpg">',
-            description:'<iframe  width="1440px" height="900px" src="http://localhost:5000">',
+            description:'<iframe  width="1000px" height="1000px" src="../Source/SampleData/victim.png">',
+            //description:'<iframe  width="1440px" height="900px" src="http://localhost:5000">',
             position : Cesium.Cartesian3.fromDegrees(120.22139,22.99661,20),
             billboard : {
                 image : pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL(),
