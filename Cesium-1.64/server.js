@@ -203,7 +203,7 @@
 
     app.get('/ajax', function(req, res) {
 
-        const ls = spawn('roslaunch',['demo_revo_lds.launch'],{cwd:'/home/bbtan/catkin_ws/src/cartographer_ros/cartographer_ros/launch'});
+        const ls = spawn('roslaunch',['demo_revo_lds.launch'],{cwd:'/home/peter40/catkin_ws/src/cartographer_ros/cartographer_ros/launch'});
 
         ls.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
