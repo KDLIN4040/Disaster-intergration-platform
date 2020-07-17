@@ -346,7 +346,7 @@ viewer.selectedEntityChanged.addEventListener(function(entity) {
                 if(event.keyCode == 20) {  
                     try{
                         entity.billboard.image = pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL();
-                        entity.billboard.scale = 3;
+                        entity.billboard.scale = 1.5;
                         entity.description = '<iframe  width="1440px" height="900px" src="http://localhost:5000">';
                         entity.name = "Interface";
                         document.removeEventListener('keydown', keyDownHandler, false);
@@ -357,8 +357,8 @@ viewer.selectedEntityChanged.addEventListener(function(entity) {
                 }else if(event.keyCode==17){             
                     try{
                         entity.billboard.image = pinBuilder.fromText('+', Cesium.Color.GREEN, 48).toDataURL();
-                        entity.billboard.scale = 3;
-                        entity.description = '<iframe  width="1000px" height="1000px" src="../Source/SampleData/victim.png">';
+                        entity.billboard.scale = 1.5;
+                        entity.description = '<iframe  width="1000px" height="1000px" src="../Source/SampleData/map.png">';
                         entity.name = "Map";
                         document.removeEventListener('keydown', keyDownHandler, false);
                     }catch(exception){
