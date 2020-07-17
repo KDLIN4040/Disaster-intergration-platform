@@ -17922,3 +17922,4 @@ Cesium-1.64/Apps/Sandcastle/Source/SampleData/Models/Hualien_20180206/Data/Tile_
 Cesium-1.64/Apps/Sandcastle/Source/SampleData/Models/Hualien_20180206/metadata.xml
 *.b3dm
 *.xml
+*.glb
